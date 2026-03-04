@@ -92,23 +92,23 @@
       var state = STATE_TITLE;
       var score = 0;
       var hiScore = parseInt(localStorage.getItem('invadrix_hi') || '0', 10);
-      var lives = 3;
       var wave = 1;
       var waveSplashTimer = 0;
 
       // ── Player ─────────────────────────────────────────────────────────────
       var player = {
         x: W / 2,
-        y: H - 50,
+        y: 560,
         w: 40,
-        h: 20,
+        h: 24,
         speed: 300,
+        lives: 3,
         invulnerable: false,
-        invulnTimer: 0,
+        invulnerableTimer: 0,
         flashTimer: 0,
-        flashVisible: true,
-        deathTimer: 0,
-        dead: false,
+        visible: true,
+        deathPauseTimer: 0,
+        deathPause: false,
       };
 
       // ── Object pools ───────────────────────────────────────────────────────
@@ -239,9 +239,9 @@
           spawnAlienGrid();
           buildShields();
           player.x = W / 2;
-          player.dead = false;
+          player.deathPause = false;
           player.invulnerable = false;
-          player.flashVisible = true;
+          player.visible = true;
         } else if (s === STATE_WAVE_SPLASH) {
           waveSplashTimer = 2.0;
         } else if (s === STATE_GAME_OVER) {
@@ -287,18 +287,18 @@
 
       // ── Hit player ─────────────────────────────────────────────────────────
       function hitPlayer() {
-        lives--;
-        if (lives <= 0) {
-          lives = 0;
+        player.lives--;
+        if (player.lives <= 0) {
+          player.lives = 0;
           enterState(STATE_GAME_OVER);
           return;
         }
-        player.dead = true;
-        player.deathTimer = 0.5;
+        player.deathPause = true;
+        player.deathPauseTimer = 0.5;
         player.invulnerable = true;
-        player.invulnTimer = 2.0;
+        player.invulnerableTimer = 2.0;
         player.flashTimer = 0;
-        player.flashVisible = true;
+        player.visible = true;
       }
 
       // ── Update ─────────────────────────────────────────────────────────────
@@ -314,27 +314,27 @@
         if (state !== STATE_PLAYING) return;
 
         // Player death animation
-        if (player.dead) {
-          player.deathTimer -= dt;
-          if (player.deathTimer <= 0) player.dead = false;
+        if (player.deathPause) {
+          player.deathPauseTimer -= dt;
+          if (player.deathPauseTimer <= 0) player.deathPause = false;
         }
 
         // Player invulnerability flash
         if (player.invulnerable) {
-          player.invulnTimer -= dt;
+          player.invulnerableTimer -= dt;
           player.flashTimer += dt;
           if (player.flashTimer >= 0.1) {
             player.flashTimer = 0;
-            player.flashVisible = !player.flashVisible;
+            player.visible = !player.visible;
           }
-          if (player.invulnTimer <= 0) {
+          if (player.invulnerableTimer <= 0) {
             player.invulnerable = false;
-            player.flashVisible = true;
+            player.visible = true;
           }
         }
 
         // Player movement
-        if (!player.dead) {
+        if (!player.deathPause) {
           if (keys['ArrowLeft']) player.x -= player.speed * dt;
           if (keys['ArrowRight']) player.x += player.speed * dt;
           var half = player.w / 2;
@@ -343,7 +343,7 @@
         }
 
         // Player shoot (one projectile at a time)
-        if (!player.dead && fireThisFrame) {
+        if (!player.deathPause && fireThisFrame) {
           var hasActive = false;
           for (var pi = 0; pi < playerProj.length; pi++) {
             if (playerProj[pi].active) {
@@ -476,7 +476,7 @@
           var aph = 12;
 
           // vs player
-          if (!player.invulnerable && !player.dead) {
+          if (!player.invulnerable && !player.deathPause) {
             var plx = Math.round(player.x - player.w / 2);
             var ply = Math.round(player.y - player.h);
             if (aabb(apx, apy, apw, aph, plx, ply, player.w, player.h)) {
@@ -569,9 +569,9 @@
         ctx.fillText('HI-SCORE', W / 2, 20);
         ctx.fillText(String(hiScore), W / 2, 40);
         ctx.textAlign = 'right';
-        ctx.fillText('LIVES', W - 10 - lives * 26, 20);
-        for (var i = 0; i < lives; i++) {
-          drawTrapezoid(W - 10 - (lives - i) * 26 + 2, 8, 20, 12, '#00ff44');
+        ctx.fillText('LIVES', W - 10 - player.lives * 26, 20);
+        for (var i = 0; i < player.lives; i++) {
+          drawTrapezoid(W - 10 - (player.lives - i) * 26 + 2, 8, 20, 12, '#00ff44');
         }
       }
 
@@ -638,7 +638,7 @@
         }
 
         // Player
-        if (player.flashVisible) {
+        if (player.visible) {
           drawTrapezoid(
             ~~(player.x - player.w / 2),
             ~~(player.y - player.h),
@@ -684,13 +684,13 @@
         if (doEnter) {
           if (state === STATE_TITLE) {
             score = 0;
-            lives = 3;
+            player.lives = 3;
             wave = 1;
             clearProjectiles();
             enterState(STATE_PLAYING);
           } else if (state === STATE_GAME_OVER) {
             score = 0;
-            lives = 3;
+            player.lives = 3;
             wave = 1;
             clearProjectiles();
             enterState(STATE_PLAYING);
