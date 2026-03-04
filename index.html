@@ -154,6 +154,63 @@
         for (var j = 0; j < alienProj.length; j++) alienProj[j].active = false;
       }
 
+      // ── Explosion pool ─────────────────────────────────────────────────────
+      var explosions = [];
+      (function () {
+        var dirs = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]];
+        var spd = 120;
+        for (var _e = 0; _e < 10; _e++) {
+          var parts = [];
+          for (var _p = 0; _p < 8; _p++) {
+            parts.push({ x: 0, y: 0, dx: dirs[_p][0] * spd, dy: dirs[_p][1] * spd });
+          }
+          explosions.push({ active: false, x: 0, y: 0, color: '#ffffff', timer: 0, particles: parts });
+        }
+      })();
+
+      function spawnExplosion(cx, cy, color) {
+        for (var i = 0; i < explosions.length; i++) {
+          if (!explosions[i].active) {
+            var exp = explosions[i];
+            exp.active = true;
+            exp.color = color;
+            exp.timer = 0.3;
+            for (var p = 0; p < 8; p++) {
+              exp.particles[p].x = cx;
+              exp.particles[p].y = cy;
+            }
+            return;
+          }
+        }
+      }
+
+      function updateExplosions(dt) {
+        for (var i = 0; i < explosions.length; i++) {
+          if (!explosions[i].active) continue;
+          var exp = explosions[i];
+          exp.timer -= dt;
+          if (exp.timer <= 0) {
+            exp.active = false;
+            continue;
+          }
+          for (var p = 0; p < 8; p++) {
+            exp.particles[p].x += exp.particles[p].dx * dt;
+            exp.particles[p].y += exp.particles[p].dy * dt;
+          }
+        }
+      }
+
+      function drawExplosions() {
+        for (var i = 0; i < explosions.length; i++) {
+          if (!explosions[i].active) continue;
+          var exp = explosions[i];
+          ctx.fillStyle = exp.color;
+          for (var p = 0; p < 8; p++) {
+            ctx.fillRect(~~exp.particles[p].x - 2, ~~exp.particles[p].y - 2, 4, 4);
+          }
+        }
+      }
+
       // ── Aliens ─────────────────────────────────────────────────────────────
       var aliens = [];
       var gridDir = 1;
@@ -339,6 +396,8 @@
           alienAnimFrame = !alienAnimFrame;
         }
 
+        updateExplosions(dt);
+
         if (state === STATE_WAVE_SPLASH) {
           waveSplashTimer -= dt;
           if (waveSplashTimer <= 0) {
@@ -474,6 +533,7 @@
             if (aabb(px, py, pw, ph, al.x, al.y, ALIEN_W, ALIEN_H)) {
               al.alive = false;
               p.active = false;
+              spawnExplosion(~~(al.x + ALIEN_W / 2), ~~(al.y + ALIEN_H / 2), ALIEN_COLORS[al.type]);
               score += ALIEN_PTS[al.type];
               if (score > hiScore) {
                 hiScore = score;
@@ -717,6 +777,8 @@
         for (var ai = 0; ai < aliens.length; ai++) {
           if (aliens[ai].alive) drawAlien(aliens[ai]);
         }
+
+        drawExplosions();
 
         // Player
         if (player.visible) {

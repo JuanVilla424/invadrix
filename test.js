@@ -78,6 +78,18 @@ const hudWaveChecks = [
   ['game reset score and lives on enter', /score\s*=\s*0[\s\S]{0,300}player\.lives\s*=\s*3/],
 ];
 
+const explosionChecks = [
+  ['var explosions array', /var explosions\s*=\s*\[\]/],
+  ['explosion pool 10 objects', /explosions\.push\(\{.*active:\s*false/s],
+  ['explosion particles 8 directions', /dirs\s*=\s*\[/],
+  ['spawnExplosion function', /function spawnExplosion/],
+  ['updateExplosions function', /function updateExplosions/],
+  ['drawExplosions function', /function drawExplosions/],
+  ['spawnExplosion called on alien kill', /spawnExplosion\s*\(/],
+  ['explosion timer 0.3', /timer\s*=\s*0\.3/],
+  ['explosion particle 4x4 fillRect', /fillRect.*-\s*2.*-\s*2.*4.*4/],
+];
+
 const engineChecks = [
   ['requestAnimationFrame loop', /requestAnimationFrame\s*\(/],
   ['deltaTime calculation', /dt\s*=\s*\(ts\s*-\s*lastTimestamp\)\s*\/\s*1000/],
@@ -112,6 +124,7 @@ for (const [name, pattern] of [
   ...alienChecks,
   ...shieldChecks,
   ...hudWaveChecks,
+  ...explosionChecks,
   ...engineChecks,
 ]) {
   if (!pattern.test(html)) {
@@ -125,6 +138,7 @@ const total =
   alienChecks.length +
   shieldChecks.length +
   hudWaveChecks.length +
+  explosionChecks.length +
   engineChecks.length;
 if (failed === 0) {
   console.log(`All ${total} checks passed.`);
