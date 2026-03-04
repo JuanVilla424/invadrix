@@ -881,10 +881,20 @@
         }
 
         if (state === STATE_WAVE_SPLASH) {
+          var elapsed = 2.0 - waveSplashTimer;
+          var scale = Math.min(1.0, 0.5 + elapsed);
+          ctx.save();
+          ctx.translate(W / 2, H / 2);
+          ctx.scale(scale, scale);
           ctx.fillStyle = '#fff';
           ctx.font = 'bold 48px monospace';
           ctx.textAlign = 'center';
-          ctx.fillText('WAVE ' + wave, W / 2, H / 2);
+          ctx.fillText('WAVE ' + wave, 0, 0);
+          ctx.font = '18px monospace';
+          ctx.fillStyle = '#aaa';
+          var hint = wave === 1 ? 'Good luck!' : wave === 2 ? 'Speed: +10%' : wave === 3 ? 'Aliens closer!' : 'Speed: +' + (wave * 10) + '%';
+          ctx.fillText(hint, 0, 44);
+          ctx.restore();
           return;
         }
 
