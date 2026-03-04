@@ -27,6 +27,7 @@
   <body>
     <canvas id="game"></canvas>
     <script>
+      (function () {
       // ── Constants ──────────────────────────────────────────────────────────
       var W = 800;
       var H = 600;
@@ -135,7 +136,8 @@
         aliens = [];
         gridDir = 1;
         gridBaseSpeed = 30 * Math.pow(1.1, wave - 1);
-        var startY = Math.min(80 + (wave - 1) * 20, H - 300);
+        var gridH = ALIEN_ROWS * (ALIEN_H + 8);
+        var startY = Math.min(80 + (wave - 1) * 20, (H - 150) - gridH - 20);
         var totalW = ALIEN_COLS * (ALIEN_W + ALIEN_GAP) - ALIEN_GAP;
         var startX = Math.round((W - totalW) / 2);
         for (var row = 0; row < ALIEN_ROWS; row++) {
@@ -701,6 +703,7 @@
       }
 
       requestAnimationFrame(loop);
+      })();
     </script>
   </body>
 </html>
