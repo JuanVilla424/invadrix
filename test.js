@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
 const html = readFileSync('./index.html', 'utf8');
 const checks = [
@@ -166,6 +166,10 @@ const responsiveChecks = [
   ['HiDPI ctx.scale(dpr,dpr)', /ctx\.scale\s*\(\s*dpr,\s*dpr\s*\)/],
   ['resizeCanvas function', /function resizeCanvas/],
   ['resize event listener', /addEventListener\s*\(\s*'resize'/],
+  ['resizeCanvas uses innerWidth and innerHeight', /innerWidth[\s\S]{0,60}innerHeight|Math\.min[\s\S]{0,60}innerWidth[\s\S]{0,60}innerHeight/],
+  ['touch button border #00E436 styling', /border:\s*2px solid #00E436/],
+  ['touch button background rgba styling', /rgba\s*\(\s*0\s*,\s*78\s*,\s*0/],
+  ['swipe-to-start or tap-to-start on title screen', /STATE_TITLE[\s\S]{0,300}enterPressed|touchstart[\s\S]{0,300}STATE_TITLE/],
 ];
 
 let failed = 0;
@@ -194,8 +198,32 @@ const total =
   engineChecks.length +
   visualPolishChecks.length +
   responsiveChecks.length;
+// Deploy workflow existence check
+const deployYmlExists = existsSync('./.github/workflows/deploy.yml');
+if (!deployYmlExists) {
+  console.error('FAIL: missing .github/workflows/deploy.yml');
+  failed++;
+}
+
+const deployYml = deployYmlExists ? readFileSync('./.github/workflows/deploy.yml', 'utf8') : '';
+const deployChecks = [
+  ['deploy.yml triggers on main branch', /branches[\s\S]{0,30}main/],
+  ['deploy.yml uses actions/checkout', /actions\/checkout/],
+  ['deploy.yml uses configure-pages', /actions\/configure-pages/],
+  ['deploy.yml uses upload-pages-artifact', /actions\/upload-pages-artifact/],
+  ['deploy.yml uses deploy-pages', /actions\/deploy-pages/],
+  ['deploy.yml pages write permission', /pages:\s*write/],
+];
+for (const [name, pattern] of deployChecks) {
+  if (!pattern.test(deployYml)) {
+    console.error(`FAIL: missing ${name}`);
+    failed++;
+  }
+}
+
+const grandTotal = total + 1 + deployChecks.length;
 if (failed === 0) {
-  console.log(`All ${total} checks passed.`);
+  console.log(`All ${grandTotal} checks passed.`);
 } else {
   console.error(`${failed} check(s) failed.`);
   process.exit(1);
