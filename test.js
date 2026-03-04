@@ -118,6 +118,36 @@ const engineChecks = [
   ['canvas clearRect each frame', /ctx\.clearRect\s*\(/],
 ];
 
+const visualPolishChecks = [
+  ['alienAnimTimer variable', /alienAnimTimer\s*=/],
+  ['alienAnimFrame variable', /alienAnimFrame\s*=/],
+  ['alienAnimFrame toggle 0.5s', /alienAnimTimer\s*>=\s*0\.5/],
+  ['ALIEN_COLORS red #FF004D', /'#FF004D'/],
+  ['ALIEN_COLORS blue #29ADFF', /'#29ADFF'/],
+  ['ALIEN_COLORS green #00E436', /'#00E436'/],
+  ['stars array starfield', /var stars\s*=\s*\[\]/],
+  ['updateStarfield function', /function updateStarfield/],
+  ['drawStarfield function', /function drawStarfield/],
+  ['starfield scroll 10px/s', /10\s*\*\s*dt/],
+  ['starfield wrap around', /stars\[i\]\.y\s*-=\s*H|y\s*-=\s*H/],
+  ['playerDeathAnim object', /var playerDeathAnim\s*=/],
+  ['playerDeathAnim active flag', /playerDeathAnim\.active\s*=/],
+  ['playerDeathAnim fragments array', /playerDeathAnim\.fragments/],
+  ['playerDeathAnim timer 0.5', /playerDeathAnim\.timer\s*=\s*0\.5/],
+  ['screen flash rgba red', /rgba\(255,\s*0,\s*0,\s*0\.3\)/],
+  ['flashTimer on death anim', /flashTimer\s*=\s*0\.1/],
+  ['wave splash ctx.scale', /ctx\.scale\s*\(\s*scale,\s*scale\s*\)/],
+  ['wave splash bold 48px', /bold\s+48px\s+monospace/],
+  ['wave splash elapsed lerp', /elapsed\s*=\s*2\.0\s*-\s*waveSplashTimer/],
+  ['title bold 64px', /bold\s+64px\s+monospace/],
+  ['title INVADRIX colored letters', /titleColors\s*=\s*\[/],
+  ['title PRESS ENTER blink', /PRESS ENTER TO START/],
+  ['title score table 30 PTS', /=\s*30 PTS/],
+  ['title score table 20 PTS', /=\s*20 PTS/],
+  ['title score table 10 PTS', /=\s*10 PTS/],
+  ['title blink timer 0.8s', /titleBlinkTimer\s*>=\s*0\.8/],
+];
+
 let failed = 0;
 for (const [name, pattern] of [
   ...checks,
@@ -126,6 +156,7 @@ for (const [name, pattern] of [
   ...hudWaveChecks,
   ...explosionChecks,
   ...engineChecks,
+  ...visualPolishChecks,
 ]) {
   if (!pattern.test(html)) {
     console.error(`FAIL: missing ${name}`);
@@ -139,7 +170,8 @@ const total =
   shieldChecks.length +
   hudWaveChecks.length +
   explosionChecks.length +
-  engineChecks.length;
+  engineChecks.length +
+  visualPolishChecks.length;
 if (failed === 0) {
   console.log(`All ${total} checks passed.`);
 } else {
