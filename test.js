@@ -43,8 +43,30 @@ const alienChecks = [
   ['getGridBounds function', /function getGridBounds/],
 ];
 
+const shieldChecks = [
+  ['SHIELD_ROWS 5', /SHIELD_ROWS\s*=\s*5/],
+  ['SHIELD_COLS 8', /SHIELD_COLS\s*=\s*8/],
+  ['CELL 6', /CELL\s*=\s*6/],
+  ['buildShields function', /function buildShields/],
+  ['hitShield function', /function hitShield/],
+  ['shield positions 25/50/75', /0\.25.*0\.5.*0\.75|positions\s*=\s*\[/s],
+  ['shield cells 2D array', /cells\[r\]\.push|cells\.push\(\[\]\)/],
+  ['aabb function', /function aabb/],
+  ['aabb overlap logic', /ax\s*<\s*bx\s*\+\s*bw/],
+  ['player proj vs aliens collision', /al\.alive\s*=\s*false/],
+  ['score increment', /score\s*\+=\s*ALIEN_PTS/],
+  ['hiScore update', /hiScore\s*=\s*score/],
+  ['hiScore localStorage save', /localStorage\.setItem.*invadrix_hi/],
+  ['hiScore localStorage load', /localStorage\.getItem.*invadrix_hi/],
+  ['player proj vs alien proj cancel', /p\.active\s*=\s*false.*q\.active\s*=\s*false|q\.active\s*=\s*false/s],
+  ['alien proj vs player hit', /function hitPlayer/],
+  ['player invulnerable check', /player\.invulnerable/],
+  ['hitPlayer lives decrement', /player\.lives--/],
+  ['game over on aliens reach player', /finalBounds.*player\.y|maxY.*player\.y/],
+];
+
 let failed = 0;
-for (const [name, pattern] of [...checks, ...alienChecks]) {
+for (const [name, pattern] of [...checks, ...alienChecks, ...shieldChecks]) {
   if (!pattern.test(html)) {
     console.error(`FAIL: missing ${name}`);
     failed++;
@@ -52,7 +74,7 @@ for (const [name, pattern] of [...checks, ...alienChecks]) {
 }
 
 if (failed === 0) {
-  console.log(`All ${checks.length + alienChecks.length} checks passed.`);
+  console.log(`All ${checks.length + alienChecks.length + shieldChecks.length} checks passed.`);
 } else {
   console.error(`${failed} check(s) failed.`);
   process.exit(1);
