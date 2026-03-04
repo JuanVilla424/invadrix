@@ -28,10 +28,13 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare pages directory
+        run: mkdir -p /tmp/pages && cp index.html .nojekyll /tmp/pages/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '/tmp/pages'
 
       - name: Deploy to GitHub Pages
         id: deployment

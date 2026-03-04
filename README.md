@@ -9,6 +9,8 @@
 
 A classic Space Invaders clone built entirely in a single `index.html` file with zero runtime dependencies. All rendering is done using the HTML5 Canvas 2D API with geometric shapes — no sprites, no images, just pure code.
 
+**Live demo:** https://juanvilla424.github.io/invadrix/
+
 ## 📚 Table of Contents
 
 - [✨ Features](#-features)
