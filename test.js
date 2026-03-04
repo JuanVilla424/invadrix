@@ -161,6 +161,11 @@ const responsiveChecks = [
   ['theme-color meta', /theme-color/],
   ['user-scalable=no', /user-scalable=no/],
   ['touch-action none', /touch-action:\s*none/],
+  ['HiDPI canvas width = W * dpr', /canvas\.width\s*=\s*W\s*\*\s*dpr/],
+  ['HiDPI canvas height = H * dpr', /canvas\.height\s*=\s*H\s*\*\s*dpr/],
+  ['HiDPI ctx.scale(dpr,dpr)', /ctx\.scale\s*\(\s*dpr,\s*dpr\s*\)/],
+  ['resizeCanvas function', /function resizeCanvas/],
+  ['resize event listener', /addEventListener\s*\(\s*'resize'/],
 ];
 
 let failed = 0;
