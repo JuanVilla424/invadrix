@@ -18,8 +18,33 @@ const checks = [
   ['script tag', /<script>/i],
 ];
 
+const alienChecks = [
+  ['ALIEN_COLS 11', /ALIEN_COLS\s*=\s*11/],
+  ['ALIEN_ROWS 5', /ALIEN_ROWS\s*=\s*5/],
+  ['ALIEN_GAP 8', /ALIEN_GAP\s*=\s*8/],
+  ['ALIEN_PTS 30/20/10', /ALIEN_PTS\s*=\s*\[30,\s*20,\s*10\]/],
+  ['gridDir variable', /gridDir\s*=/],
+  ['gridBaseSpeed', /gridBaseSpeed\s*=/],
+  ['alienFireTimer', /alienFireTimer/],
+  ['spawnAlienGrid function', /function spawnAlienGrid/],
+  ['tryAlienFire function', /function tryAlienFire/],
+  ['drawZigzag function', /function drawZigzag/],
+  ['drawTriangle function', /function drawTriangle/],
+  ['drawDiamond function', /function drawDiamond/],
+  ['speed scaling formula', /total\s*-\s*aliveCount/],
+  ['grid edge MARGIN check', /MARGIN/],
+  ['gridDir reverse', /gridDir\s*\*=\s*-1/],
+  ['alien shift down 20px', /\.y\s*\+=\s*20/],
+  ['alien fire max 3', /activeCount\s*>=\s*3/],
+  ['zigzag strokeStyle yellow', /'#ffff00'/],
+  ['zigzag lineWidth 2', /lineWidth\s*=\s*2/],
+  ['alien proj speed 200', /200\s*\*\s*dt/],
+  ['getAliveCount function', /function getAliveCount/],
+  ['getGridBounds function', /function getGridBounds/],
+];
+
 let failed = 0;
-for (const [name, pattern] of checks) {
+for (const [name, pattern] of [...checks, ...alienChecks]) {
   if (!pattern.test(html)) {
     console.error(`FAIL: missing ${name}`);
     failed++;
@@ -27,7 +52,7 @@ for (const [name, pattern] of checks) {
 }
 
 if (failed === 0) {
-  console.log(`All ${checks.length} checks passed.`);
+  console.log(`All ${checks.length + alienChecks.length} checks passed.`);
 } else {
   console.error(`${failed} check(s) failed.`);
   process.exit(1);
