@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>Invadrix — Space Invaders</title>
     <style>
       * {
@@ -15,15 +19,44 @@
         overflow: hidden;
         height: 100vh;
         position: relative;
+        touch-action: none;
       }
       canvas {
         image-rendering: pixelated;
         image-rendering: crisp-edges;
       }
+      #touch-controls {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        display: none;
+        justify-content: center;
+        gap: 20px;
+        z-index: 10;
+      }
+      #touch-controls button {
+        border: 2px solid #00E436;
+        background: rgba(0, 78, 0, 0.3);
+        color: #00E436;
+        font-family: monospace;
+        font-size: 24px;
+        padding: 15px 25px;
+        border-radius: 6px;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: none;
+      }
     </style>
   </head>
   <body>
     <canvas id="game"></canvas>
+    <div id="touch-controls">
+      <button id="btn-left">&#9664;</button>
+      <button id="btn-fire">FIRE</button>
+      <button id="btn-right">&#9654;</button>
+    </div>
     <script>
       (function () {
       // ── Constants ──────────────────────────────────────────────────────────
@@ -70,6 +103,8 @@
       var keys = {};
       var enterPressed = false;
       var spacePressed = false;
+      var touchFireActive = false;
+      var isTouchDevice = 'ontouchstart' in window;
 
       window.addEventListener('keydown', function (e) {
         if (
@@ -90,6 +125,38 @@
       window.addEventListener('keyup', function (e) {
         keys[e.key] = false;
       });
+
+      // ── Touch controls ─────────────────────────────────────────────────────
+      if (isTouchDevice) {
+        document.getElementById('touch-controls').style.display = 'flex';
+      }
+
+      function addTouchBtn(id, onStart, onEnd) {
+        var btn = document.getElementById(id);
+        btn.addEventListener('touchstart', function (e) { e.preventDefault(); onStart(); }, { passive: false });
+        btn.addEventListener('touchend', function (e) { e.preventDefault(); onEnd(); }, { passive: false });
+        btn.addEventListener('touchcancel', function (e) { e.preventDefault(); onEnd(); }, { passive: false });
+      }
+
+      addTouchBtn('btn-left',
+        function () { keys['ArrowLeft'] = true; },
+        function () { keys['ArrowLeft'] = false; }
+      );
+      addTouchBtn('btn-right',
+        function () { keys['ArrowRight'] = true; },
+        function () { keys['ArrowRight'] = false; }
+      );
+      addTouchBtn('btn-fire',
+        function () { touchFireActive = true; spacePressed = true; },
+        function () { touchFireActive = false; }
+      );
+
+      canvas.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        if (state === STATE_TITLE || state === STATE_GAME_OVER) {
+          enterPressed = true;
+        }
+      }, { passive: false });
 
       // ── Game state ─────────────────────────────────────────────────────────
       var state = STATE_TITLE;
@@ -834,12 +901,12 @@
             }
           }
 
-          // Blinking "PRESS ENTER TO START"
+          // Blinking "PRESS ENTER TO START" / "TAP TO START"
           if (titleBlinkVisible) {
             ctx.fillStyle = '#fff';
             ctx.font = '24px monospace';
             ctx.textAlign = 'center';
-            ctx.fillText('PRESS ENTER TO START', W / 2, 290);
+            ctx.fillText(isTouchDevice ? 'TAP TO START' : 'PRESS ENTER TO START', W / 2, 290);
           }
 
           // Controls hint
@@ -975,6 +1042,7 @@
 
         // Latch edge-triggered inputs then clear
         var doEnter = enterPressed;
+        if (touchFireActive) spacePressed = true;
         fireThisFrame = spacePressed;
         enterPressed = false;
         spacePressed = false;
