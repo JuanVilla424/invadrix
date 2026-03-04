@@ -1,3 +1,20 @@
+## [0.1.3] - 2026-03-04
+
+### Bug Fixes
+
+- **core**: restrict pages deployment to main branch only (`patch candidate`)
+- **core**: use null-prototype object for key map to prevent prototype pollution (`patch candidate`)
+- **core**: show tap-to-restart prompt on touch devices in game over screen (`patch candidate`)
+
+### Documentation
+
+- **core**: update changelog
+- **core**: add live demo link to readme and scope deploy artifact to pages files (`patch candidate`)
+
+### Tests
+
+- **core**: expand test coverage for responsive, hidpi, touch, and deploy workflow (`patch candidate`)
+
 ## [0.1.1] - 2026-03-04
 
 ### Features

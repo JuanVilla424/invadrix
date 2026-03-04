@@ -171,6 +171,9 @@ const responsiveChecks = [
   ['touch button background rgba styling', /rgba\s*\(\s*0\s*,\s*78\s*,\s*0/],
   ['swipe-to-start or tap-to-start on title screen', /STATE_TITLE[\s\S]{0,300}enterPressed|touchstart[\s\S]{0,300}STATE_TITLE/],
   ['game over tap-to-restart for touch devices', /isTouchDevice.*TAP TO RESTART|TAP TO RESTART.*isTouchDevice/],
+  ['resize uses 10px padding each side (innerWidth-20)', /innerWidth\s*-\s*20/],
+  ['touchcancel handler for multi-touch cleanup', /touchcancel/],
+  ['resize scale uses Math.min for aspect ratio preservation', /Math\.min[\s\S]{0,60}innerWidth/],
 ];
 
 let failed = 0;
