@@ -16,6 +16,8 @@ A classic Space Invaders clone built entirely in a single `index.html` file with
   - [📋 Prerequisites](#-prerequisites)
   - [📦 Installation](#-installation)
   - [🌐 Running the Game](#-running-the-game)
+  - [⚙️ Environment Setup](#️-environment-setup)
+  - [🔗 Pre-Commit Hooks](#-pre-commit-hooks)
 - [📋 Scripts](#-scripts)
 - [🏗️ Architecture](#-architecture)
 - [🤝 Contributing](#-contributing)
@@ -66,6 +68,30 @@ npm start
 
 ```bash
 npx serve .
+```
+
+### ⚙️ Environment Setup
+
+No environment variables required — the game is fully static. For contributors running the test suite or local server:
+
+```bash
+npm install
+```
+
+### 🔗 Pre-Commit Hooks
+
+Contributors must install the pre-commit hooks to enforce linting and formatting:
+
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit install --hook-type pre-push
+```
+
+Verify hooks are working:
+
+```bash
+pre-commit run --all-files
 ```
 
 ## 📋 Scripts

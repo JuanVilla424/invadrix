@@ -21,7 +21,7 @@ Invadrix is a classic Space Invaders clone implemented as a **single HTML5 file*
 ```
 invadrix/
 ├── index.html              # Entire game — HTML + CSS + JS in one file
-├── test.js                 # Regex-based structural checks (138 checks)
+├── test.js                 # Regex-based structural checks (143 checks)
 ├── package.json            # Dev scripts only (no runtime deps)
 ├── .nojekyll               # Prevents Jekyll processing on GitHub Pages
 ├── .github/workflows/      # CI/CD pipelines
