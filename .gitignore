@@ -132,3 +132,8 @@ $RECYCLE.BIN/
 *.njsproj
 *.sln
 *.sw?
+
+# Certificates / secrets
+*.pem
+certs/
+secrets/
