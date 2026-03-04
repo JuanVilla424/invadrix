@@ -94,6 +94,8 @@
       var hiScore = parseInt(localStorage.getItem('invadrix_hi') || '0', 10);
       var wave = 1;
       var waveSplashTimer = 0;
+      var titleBlinkTimer = 0;
+      var titleBlinkVisible = true;
 
       // ── Alien animation ────────────────────────────────────────────────────
       var alienAnimTimer = 0;
@@ -472,6 +474,13 @@
           }
           return;
         }
+        if (state === STATE_TITLE) {
+          titleBlinkTimer += dt;
+          if (titleBlinkTimer >= 0.8) {
+            titleBlinkTimer -= 0.8;
+            titleBlinkVisible = !titleBlinkVisible;
+          }
+        }
         if (state !== STATE_PLAYING) return;
 
         // Player death animation
@@ -791,15 +800,71 @@
         drawStarfield();
 
         if (state === STATE_TITLE) {
-          ctx.fillStyle = '#fff';
+          // Colored INVADRIX title — each letter a different PICO-8 color
+          var titleColors = ['#FF004D', '#FFA300', '#FFEC27', '#00E436', '#29ADFF', '#83769C', '#FF77A8', '#FFCCAA'];
+          var titleStr = 'INVADRIX';
           ctx.font = 'bold 64px monospace';
-          ctx.textAlign = 'center';
-          ctx.fillText('INVADRIX', W / 2, H / 2 - 40);
-          ctx.font = '20px monospace';
-          ctx.fillText('PRESS ENTER TO START', W / 2, H / 2 + 20);
+          ctx.textAlign = 'left';
+          var totalTW = ctx.measureText(titleStr).width;
+          var curTX = (W - totalTW) / 2;
+          for (var li = 0; li < titleStr.length; li++) {
+            ctx.fillStyle = titleColors[li];
+            ctx.fillText(titleStr[li], ~~curTX, 140);
+            curTX += ctx.measureText(titleStr[li]).width;
+          }
+
+          // Animated alien demos (3 types at 1.5x size)
+          var demoW = 45, demoH = 36, demoY = 185;
+          var demoXs = [~~(W / 2 - 150 - demoW / 2), ~~(W / 2 - demoW / 2), ~~(W / 2 + 150 - demoW / 2)];
+          for (var di = 0; di < 3; di++) {
+            var dcol = ALIEN_COLORS[di];
+            var ddx = demoXs[di];
+            if (di === 0) {
+              if (alienAnimFrame) drawInvertedTriangle(ddx, demoY, demoW, demoH, dcol);
+              else drawTriangle(ddx, demoY, demoW, demoH, dcol);
+            } else if (di === 1) {
+              if (alienAnimFrame) drawWideDiamond(ddx, demoY, demoW, demoH, dcol);
+              else drawDiamond(ddx, demoY, demoW, demoH, dcol);
+            } else {
+              if (alienAnimFrame) drawDonutSquare(ddx, demoY, demoW, demoH, dcol);
+              else { ctx.fillStyle = dcol; ctx.fillRect(ddx, demoY, demoW, demoH); }
+            }
+          }
+
+          // Blinking "PRESS ENTER TO START"
+          if (titleBlinkVisible) {
+            ctx.fillStyle = '#fff';
+            ctx.font = '24px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('PRESS ENTER TO START', W / 2, 290);
+          }
+
+          // Controls hint
           ctx.font = '14px monospace';
           ctx.fillStyle = '#888';
-          ctx.fillText('Arrow Keys: Move   Space: Fire', W / 2, H / 2 + 60);
+          ctx.textAlign = 'center';
+          ctx.fillText('Arrow Keys: Move   Space: Fire', W / 2, 330);
+
+          // Score table with alien shape icons
+          var tblIW = 24, tblIH = 18;
+          var tblIconX = ~~(W / 2 - 57);
+          var tblTxtX = ~~(W / 2 - 57 + tblIW + 10);
+          ctx.font = '16px monospace';
+          ctx.textAlign = 'left';
+
+          drawTriangle(tblIconX, 395, tblIW, tblIH, '#FF004D');
+          ctx.fillStyle = '#fff';
+          ctx.fillText('= 30 PTS', tblTxtX, 410);
+
+          drawDiamond(tblIconX, 435, tblIW, tblIH, '#29ADFF');
+          ctx.fillStyle = '#fff';
+          ctx.fillText('= 20 PTS', tblTxtX, 450);
+
+          ctx.fillStyle = '#00E436';
+          ctx.fillRect(tblIconX, 475, tblIW, tblIH);
+          ctx.fillStyle = '#fff';
+          ctx.fillText('= 10 PTS', tblTxtX, 490);
+
           return;
         }
 
