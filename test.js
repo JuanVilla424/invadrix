@@ -65,16 +65,35 @@ const shieldChecks = [
   ['game over on aliens reach player', /finalBounds.*player\.y|maxY.*player\.y/],
 ];
 
+const hudWaveChecks = [
+  ['drawHUD function', /function drawHUD/],
+  ['HI-SCORE label', /HI-SCORE/],
+  ['waveSplashTimer variable', /waveSplashTimer/],
+  ['wave increment', /wave\+\+/],
+  ['enterState WAVE_SPLASH transition', /enterState\(STATE_WAVE_SPLASH\)/],
+  ['baseSpeed wave scaling pow 1.1', /Math\.pow\(1\.1,\s*wave\s*-\s*1\)/],
+  ['lives trapezoid icons in HUD', /drawTrapezoid[\s\S]{0,100}player\.lives/],
+  ['WAVE text in HUD', /'WAVE\s*'\s*\+\s*wave/],
+  ['SCORE text in HUD', /'SCORE\s*'/],
+  ['game reset score and lives on enter', /score\s*=\s*0[\s\S]{0,300}player\.lives\s*=\s*3/],
+];
+
 let failed = 0;
-for (const [name, pattern] of [...checks, ...alienChecks, ...shieldChecks]) {
+for (const [name, pattern] of [
+  ...checks,
+  ...alienChecks,
+  ...shieldChecks,
+  ...hudWaveChecks,
+]) {
   if (!pattern.test(html)) {
     console.error(`FAIL: missing ${name}`);
     failed++;
   }
 }
 
+const total = checks.length + alienChecks.length + shieldChecks.length + hudWaveChecks.length;
 if (failed === 0) {
-  console.log(`All ${checks.length + alienChecks.length + shieldChecks.length} checks passed.`);
+  console.log(`All ${total} checks passed.`);
 } else {
   console.error(`${failed} check(s) failed.`);
   process.exit(1);
