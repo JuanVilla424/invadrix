@@ -148,6 +148,21 @@ const visualPolishChecks = [
   ['title blink timer 0.8s', /titleBlinkTimer\s*>=\s*0\.8/],
 ];
 
+const responsiveChecks = [
+  ['CSS transform scaling', /transform.*scale/],
+  ['touch-controls div', /id="touch-controls"/],
+  ['touch button left', /btn-left/],
+  ['touch button fire', /btn-fire/],
+  ['touch button right', /btn-right/],
+  ['ontouchstart detection', /ontouchstart/],
+  ['touchstart event', /touchstart/],
+  ['touchend event', /touchend/],
+  ['apple-mobile-web-app-capable', /apple-mobile-web-app-capable/],
+  ['theme-color meta', /theme-color/],
+  ['user-scalable=no', /user-scalable=no/],
+  ['touch-action none', /touch-action:\s*none/],
+];
+
 let failed = 0;
 for (const [name, pattern] of [
   ...checks,
@@ -157,6 +172,7 @@ for (const [name, pattern] of [
   ...explosionChecks,
   ...engineChecks,
   ...visualPolishChecks,
+  ...responsiveChecks,
 ]) {
   if (!pattern.test(html)) {
     console.error(`FAIL: missing ${name}`);
@@ -171,7 +187,8 @@ const total =
   hudWaveChecks.length +
   explosionChecks.length +
   engineChecks.length +
-  visualPolishChecks.length;
+  visualPolishChecks.length +
+  responsiveChecks.length;
 if (failed === 0) {
   console.log(`All ${total} checks passed.`);
 } else {
