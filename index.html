@@ -161,7 +161,7 @@
       // ── Game state ─────────────────────────────────────────────────────────
       var state = STATE_TITLE;
       var score = 0;
-      var hiScore = parseInt(localStorage.getItem('invadrix_hi') || '0', 10);
+      var hiScore = parseInt(localStorage.getItem('invadrix_hi') || '0', 10) || 0;
       var wave = 1;
       var waveSplashTimer = 0;
       var titleBlinkTimer = 0;
