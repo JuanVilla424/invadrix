@@ -95,6 +95,30 @@
       var wave = 1;
       var waveSplashTimer = 0;
 
+      // ── Starfield ──────────────────────────────────────────────────────────
+      var stars = [];
+      for (var _s = 0; _s < 50; _s++) {
+        stars.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          size: Math.random() < 0.5 ? 1 : 2,
+        });
+      }
+
+      function updateStarfield(dt) {
+        for (var i = 0; i < stars.length; i++) {
+          stars[i].y += 10 * dt;
+          if (stars[i].y >= H) stars[i].y -= H;
+        }
+      }
+
+      function drawStarfield() {
+        ctx.fillStyle = '#ffffff';
+        for (var i = 0; i < stars.length; i++) {
+          ctx.fillRect(~~stars[i].x, ~~stars[i].y, stars[i].size, stars[i].size);
+        }
+      }
+
       // ── Player ─────────────────────────────────────────────────────────────
       var player = {
         x: W / 2,
@@ -303,6 +327,8 @@
 
       // ── Update ─────────────────────────────────────────────────────────────
       function update(dt) {
+        updateStarfield(dt);
+
         if (state === STATE_WAVE_SPLASH) {
           waveSplashTimer -= dt;
           if (waveSplashTimer <= 0) {
@@ -578,6 +604,7 @@
       // ── Render ─────────────────────────────────────────────────────────────
       function render() {
         ctx.clearRect(0, 0, W, H);
+        drawStarfield();
 
         if (state === STATE_TITLE) {
           ctx.fillStyle = '#fff';
