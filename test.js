@@ -78,12 +78,41 @@ const hudWaveChecks = [
   ['game reset score and lives on enter', /score\s*=\s*0[\s\S]{0,300}player\.lives\s*=\s*3/],
 ];
 
+const engineChecks = [
+  ['requestAnimationFrame loop', /requestAnimationFrame\s*\(/],
+  ['deltaTime calculation', /dt\s*=\s*\(ts\s*-\s*lastTimestamp\)\s*\/\s*1000/],
+  ['deltaTime cap 0.1', /dt\s*>\s*0\.1/],
+  ['STATE_TITLE constant', /STATE_TITLE\s*=\s*0/],
+  ['STATE_PLAYING constant', /STATE_PLAYING\s*=\s*1/],
+  ['STATE_WAVE_SPLASH constant', /STATE_WAVE_SPLASH\s*=\s*2/],
+  ['STATE_GAME_OVER constant', /STATE_GAME_OVER\s*=\s*3/],
+  ['keydown event listener', /addEventListener\s*\(\s*'keydown'/],
+  ['keyup event listener', /addEventListener\s*\(\s*'keyup'/],
+  ['fillRect canvas call', /ctx\.fillRect\s*\(/],
+  ['beginPath canvas call', /ctx\.beginPath\s*\(\s*\)/],
+  ['localStorage load hiScore', /localStorage\.getItem\s*\(\s*'invadrix_hi'\s*\)/],
+  ['localStorage save hiScore', /localStorage\.setItem\s*\(\s*'invadrix_hi'/],
+  ['player invulnerable flag', /player\.invulnerable\s*=/],
+  ['playerProj pool array', /var playerProj\s*=\s*\[\]/],
+  ['alienProj pool array', /var alienProj\s*=\s*\[\]/],
+  ['object pool active flag init', /active:\s*false/],
+  ['object pool activate on fire', /\.active\s*=\s*true/],
+  ['object pool deactivate offscreen', /\.active\s*=\s*false/],
+  ['aabb collision check', /function aabb/],
+  ['shield cells grid 2D', /SHIELD_ROWS\s*=\s*5/],
+  ['player proj upward speed 500', /500\s*\*\s*dt/],
+  ['player speed 300', /speed:\s*300|300\s*\*\s*dt|player\.speed\s*\*\s*dt/],
+  ['devicePixelRatio scaling', /devicePixelRatio/],
+  ['canvas clearRect each frame', /ctx\.clearRect\s*\(/],
+];
+
 let failed = 0;
 for (const [name, pattern] of [
   ...checks,
   ...alienChecks,
   ...shieldChecks,
   ...hudWaveChecks,
+  ...engineChecks,
 ]) {
   if (!pattern.test(html)) {
     console.error(`FAIL: missing ${name}`);
@@ -91,7 +120,12 @@ for (const [name, pattern] of [
   }
 }
 
-const total = checks.length + alienChecks.length + shieldChecks.length + hudWaveChecks.length;
+const total =
+  checks.length +
+  alienChecks.length +
+  shieldChecks.length +
+  hudWaveChecks.length +
+  engineChecks.length;
 if (failed === 0) {
   console.log(`All ${total} checks passed.`);
 } else {
