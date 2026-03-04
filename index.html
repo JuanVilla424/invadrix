@@ -95,6 +95,10 @@
       var wave = 1;
       var waveSplashTimer = 0;
 
+      // ── Alien animation ────────────────────────────────────────────────────
+      var alienAnimTimer = 0;
+      var alienAnimFrame = false;
+
       // ── Starfield ──────────────────────────────────────────────────────────
       var stars = [];
       for (var _s = 0; _s < 50; _s++) {
@@ -329,6 +333,12 @@
       function update(dt) {
         updateStarfield(dt);
 
+        alienAnimTimer += dt;
+        if (alienAnimTimer >= 0.5) {
+          alienAnimTimer -= 0.5;
+          alienAnimFrame = !alienAnimFrame;
+        }
+
         if (state === STATE_WAVE_SPLASH) {
           waveSplashTimer -= dt;
           if (waveSplashTimer <= 0) {
@@ -556,6 +566,38 @@
         ctx.fill();
       }
 
+      function drawInvertedTriangle(x, y, w, h, color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + w, y);
+        ctx.lineTo((x + (w >> 1)) | 0, y + h);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawWideDiamond(x, y, w, h, color) {
+        var cx = (x + (w >> 1)) | 0;
+        var cy = (y + (h >> 1)) | 0;
+        var hh = (h >> 2);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - hh);
+        ctx.lineTo(x + w, cy);
+        ctx.lineTo(cx, cy + hh);
+        ctx.lineTo(x, cy);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawDonutSquare(x, y, w, h, color) {
+        var m = (w >> 3) + 1;
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(x + m, y + m, w - m * 2, h - m * 2);
+      }
+
       var ALIEN_COLORS = ['#FF004D', '#29ADFF', '#00E436'];
 
       function drawAlien(a) {
@@ -563,12 +605,24 @@
         var ay = ~~a.y;
         var color = ALIEN_COLORS[a.type];
         if (a.type === 0) {
-          drawTriangle(ax, ay, ALIEN_W, ALIEN_H, color);
+          if (alienAnimFrame) {
+            drawInvertedTriangle(ax, ay, ALIEN_W, ALIEN_H, color);
+          } else {
+            drawTriangle(ax, ay, ALIEN_W, ALIEN_H, color);
+          }
         } else if (a.type === 1) {
-          drawDiamond(ax, ay, ALIEN_W, ALIEN_H, color);
+          if (alienAnimFrame) {
+            drawWideDiamond(ax, ay, ALIEN_W, ALIEN_H, color);
+          } else {
+            drawDiamond(ax, ay, ALIEN_W, ALIEN_H, color);
+          }
         } else {
-          ctx.fillStyle = color;
-          ctx.fillRect(ax, ay, ALIEN_W, ALIEN_H);
+          if (alienAnimFrame) {
+            drawDonutSquare(ax, ay, ALIEN_W, ALIEN_H, color);
+          } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(ax, ay, ALIEN_W, ALIEN_H);
+          }
         }
       }
 
