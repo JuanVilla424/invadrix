@@ -13,10 +13,8 @@
       body {
         background: #000;
         overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         height: 100vh;
+        position: relative;
       }
       canvas {
         image-rendering: pixelated;
@@ -56,9 +54,14 @@
       ctx.scale(dpr, dpr);
 
       function resizeCanvas() {
-        var scale = Math.min(window.innerWidth / W, window.innerHeight / H);
-        canvas.style.width = Math.floor(W * scale) + 'px';
-        canvas.style.height = Math.floor(H * scale) + 'px';
+        var scale = Math.min((window.innerWidth - 20) / W, (window.innerHeight - 20) / H);
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        canvas.style.position = 'absolute';
+        canvas.style.transformOrigin = 'center center';
+        canvas.style.transform = 'scale(' + scale + ')';
+        canvas.style.left = Math.round((window.innerWidth - W) / 2) + 'px';
+        canvas.style.top = Math.round((window.innerHeight - H) / 2) + 'px';
       }
       window.addEventListener('resize', resizeCanvas);
       resizeCanvas();
