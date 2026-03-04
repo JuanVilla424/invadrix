@@ -946,7 +946,7 @@
           ctx.font = '24px monospace';
           ctx.fillText('SCORE ' + score, W / 2, H / 2 + 10);
           ctx.font = '18px monospace';
-          ctx.fillText('PRESS ENTER TO RESTART', W / 2, H / 2 + 50);
+          ctx.fillText(isTouchDevice ? 'TAP TO RESTART' : 'PRESS ENTER TO RESTART', W / 2, H / 2 + 50);
           return;
         }
 

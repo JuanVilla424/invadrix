@@ -170,6 +170,7 @@ const responsiveChecks = [
   ['touch button border #00E436 styling', /border:\s*2px solid #00E436/],
   ['touch button background rgba styling', /rgba\s*\(\s*0\s*,\s*78\s*,\s*0/],
   ['swipe-to-start or tap-to-start on title screen', /STATE_TITLE[\s\S]{0,300}enterPressed|touchstart[\s\S]{0,300}STATE_TITLE/],
+  ['game over tap-to-restart for touch devices', /isTouchDevice.*TAP TO RESTART|TAP TO RESTART.*isTouchDevice/],
 ];
 
 let failed = 0;
