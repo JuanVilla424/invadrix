@@ -139,6 +139,19 @@
         deathPause: false,
       };
 
+      // ── Player death animation ─────────────────────────────────────────────
+      var playerDeathAnim = {
+        active: false,
+        timer: 0,
+        flashTimer: 0,
+        fragments: [
+          { x: 0, y: 0, dx: 0, dy: 0, rot: 0, drot: 0 },
+          { x: 0, y: 0, dx: 0, dy: 0, rot: 0, drot: 0 },
+          { x: 0, y: 0, dx: 0, dy: 0, rot: 0, drot: 0 },
+          { x: 0, y: 0, dx: 0, dy: 0, rot: 0, drot: 0 },
+        ],
+      };
+
       // ── Object pools ───────────────────────────────────────────────────────
       var playerProj = [];
       var alienProj = [];
@@ -208,6 +221,39 @@
           for (var p = 0; p < 8; p++) {
             ctx.fillRect(~~exp.particles[p].x - 2, ~~exp.particles[p].y - 2, 4, 4);
           }
+        }
+      }
+
+      function updatePlayerDeathAnim(dt) {
+        if (!playerDeathAnim.active) return;
+        playerDeathAnim.timer -= dt;
+        if (playerDeathAnim.flashTimer > 0) playerDeathAnim.flashTimer -= dt;
+        if (playerDeathAnim.timer <= 0) {
+          playerDeathAnim.active = false;
+          player.visible = true;
+          return;
+        }
+        for (var i = 0; i < 4; i++) {
+          var f = playerDeathAnim.fragments[i];
+          f.x += f.dx * dt;
+          f.y += f.dy * dt;
+          f.rot += f.drot * dt;
+        }
+      }
+
+      function drawPlayerDeathAnim() {
+        if (!playerDeathAnim.active) return;
+        var alpha = playerDeathAnim.timer / 0.5;
+        var fw = (player.w / 2) | 0;
+        var fh = (player.h / 2) | 0;
+        for (var i = 0; i < 4; i++) {
+          var f = playerDeathAnim.fragments[i];
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(~~f.x, ~~f.y);
+          ctx.rotate(f.rot);
+          drawTrapezoid(-(fw >> 1), -(fh >> 1), fw, fh, '#00E436');
+          ctx.restore();
         }
       }
 
@@ -378,12 +424,31 @@
           enterState(STATE_GAME_OVER);
           return;
         }
+        var cx = player.x;
+        var cy = player.y - player.h / 2;
+        var fw = (player.w / 2) | 0;
+        var fh = (player.h / 2) | 0;
+        playerDeathAnim.active = true;
+        playerDeathAnim.timer = 0.5;
+        playerDeathAnim.flashTimer = 0.1;
+        playerDeathAnim.fragments[0].x = cx - fw / 2; playerDeathAnim.fragments[0].y = cy - fh / 2;
+        playerDeathAnim.fragments[0].dx = -90; playerDeathAnim.fragments[0].dy = -110;
+        playerDeathAnim.fragments[0].rot = 0; playerDeathAnim.fragments[0].drot = -5;
+        playerDeathAnim.fragments[1].x = cx + fw / 2; playerDeathAnim.fragments[1].y = cy - fh / 2;
+        playerDeathAnim.fragments[1].dx = 90;  playerDeathAnim.fragments[1].dy = -110;
+        playerDeathAnim.fragments[1].rot = 0; playerDeathAnim.fragments[1].drot = 5;
+        playerDeathAnim.fragments[2].x = cx - fw / 2; playerDeathAnim.fragments[2].y = cy + fh / 2;
+        playerDeathAnim.fragments[2].dx = -90; playerDeathAnim.fragments[2].dy = 90;
+        playerDeathAnim.fragments[2].rot = 0; playerDeathAnim.fragments[2].drot = 6;
+        playerDeathAnim.fragments[3].x = cx + fw / 2; playerDeathAnim.fragments[3].y = cy + fh / 2;
+        playerDeathAnim.fragments[3].dx = 90;  playerDeathAnim.fragments[3].dy = 90;
+        playerDeathAnim.fragments[3].rot = 0; playerDeathAnim.fragments[3].drot = -6;
         player.deathPause = true;
         player.deathPauseTimer = 0.5;
         player.invulnerable = true;
         player.invulnerableTimer = 2.0;
         player.flashTimer = 0;
-        player.visible = true;
+        player.visible = false;
       }
 
       // ── Update ─────────────────────────────────────────────────────────────
@@ -397,6 +462,7 @@
         }
 
         updateExplosions(dt);
+        updatePlayerDeathAnim(dt);
 
         if (state === STATE_WAVE_SPLASH) {
           waveSplashTimer -= dt;
@@ -417,10 +483,12 @@
         // Player invulnerability flash
         if (player.invulnerable) {
           player.invulnerableTimer -= dt;
-          player.flashTimer += dt;
-          if (player.flashTimer >= 0.1) {
-            player.flashTimer = 0;
-            player.visible = !player.visible;
+          if (!playerDeathAnim.active) {
+            player.flashTimer += dt;
+            if (player.flashTimer >= 0.1) {
+              player.flashTimer = 0;
+              player.visible = !player.visible;
+            }
           }
           if (player.invulnerableTimer <= 0) {
             player.invulnerable = false;
@@ -481,23 +549,25 @@
           return;
         }
 
-        var total = ALIEN_ROWS * ALIEN_COLS;
-        var speed = gridBaseSpeed * (1 + ((total - aliveCount) / total) * 2);
-        var dx = speed * gridDir * dt;
+        if (!playerDeathAnim.active || playerDeathAnim.timer <= 0.2) {
+          var total = ALIEN_ROWS * ALIEN_COLS;
+          var speed = gridBaseSpeed * (1 + ((total - aliveCount) / total) * 2);
+          var dx = speed * gridDir * dt;
 
-        for (var ai = 0; ai < aliens.length; ai++) {
-          if (aliens[ai].alive) aliens[ai].x += dx;
-        }
+          for (var ai = 0; ai < aliens.length; ai++) {
+            if (aliens[ai].alive) aliens[ai].x += dx;
+          }
 
-        var bounds = getGridBounds();
-        if (bounds) {
-          if (
-            (gridDir === 1 && bounds.maxX >= W - MARGIN) ||
-            (gridDir === -1 && bounds.minX <= MARGIN)
-          ) {
-            gridDir *= -1;
-            for (var ad = 0; ad < aliens.length; ad++) {
-              if (aliens[ad].alive) aliens[ad].y += 20;
+          var bounds = getGridBounds();
+          if (bounds) {
+            if (
+              (gridDir === 1 && bounds.maxX >= W - MARGIN) ||
+              (gridDir === -1 && bounds.minX <= MARGIN)
+            ) {
+              gridDir *= -1;
+              for (var ad = 0; ad < aliens.length; ad++) {
+                if (aliens[ad].alive) aliens[ad].y += 20;
+              }
             }
           }
         }
@@ -779,6 +849,7 @@
         }
 
         drawExplosions();
+        drawPlayerDeathAnim();
 
         // Player
         if (player.visible) {
@@ -803,6 +874,12 @@
         for (var ap = 0; ap < alienProj.length; ap++) {
           if (!alienProj[ap].active) continue;
           drawZigzag(alienProj[ap].x, alienProj[ap].y);
+        }
+
+        // Screen flash on player death
+        if (playerDeathAnim.flashTimer > 0) {
+          ctx.fillStyle = 'rgba(255,0,0,0.3)';
+          ctx.fillRect(0, 0, W, H);
         }
 
         drawHUD();
