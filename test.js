@@ -36,7 +36,7 @@ const alienChecks = [
   ['gridDir reverse', /gridDir\s*\*=\s*-1/],
   ['alien shift down 20px', /\.y\s*\+=\s*20/],
   ['alien fire max 3', /activeCount\s*>=\s*3/],
-  ['zigzag strokeStyle yellow', /'#ffff00'/],
+  ['zigzag strokeStyle yellow', /'#FFEC27'/],
   ['zigzag lineWidth 2', /lineWidth\s*=\s*2/],
   ['alien proj speed 200', /200\s*\*\s*dt/],
   ['getAliveCount function', /function getAliveCount/],

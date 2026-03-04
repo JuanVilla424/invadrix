@@ -556,7 +556,7 @@
         ctx.fill();
       }
 
-      var ALIEN_COLORS = ['#ff4444', '#ff8844', '#ffff44'];
+      var ALIEN_COLORS = ['#FF004D', '#29ADFF', '#00E436'];
 
       function drawAlien(a) {
         var ax = ~~a.x;
@@ -575,7 +575,7 @@
       function drawZigzag(x, y) {
         var xi = ~~x;
         var yi = ~~y;
-        ctx.strokeStyle = '#ffff00';
+        ctx.strokeStyle = '#FFEC27';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(xi, yi);
@@ -597,7 +597,7 @@
         ctx.textAlign = 'right';
         ctx.fillText('LIVES', W - 10 - player.lives * 26, 20);
         for (var i = 0; i < player.lives; i++) {
-          drawTrapezoid(W - 10 - (player.lives - i) * 26 + 2, 8, 20, 12, '#00ff44');
+          drawTrapezoid(W - 10 - (player.lives - i) * 26 + 2, 8, 20, 12, '#00E436');
         }
       }
 
@@ -642,7 +642,7 @@
         // STATE_PLAYING
 
         // Shields
-        ctx.fillStyle = '#00ff44';
+        ctx.fillStyle = '#00E436';
         for (var s = 0; s < shields.length; s++) {
           var sh = shields[s];
           for (var sr = 0; sr < SHIELD_ROWS; sr++) {
@@ -671,12 +671,12 @@
             ~~(player.y - player.h),
             player.w,
             player.h,
-            '#00ff44'
+            '#00E436'
           );
         }
 
         // Player projectiles
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = '#FFFFFF';
         for (var pp = 0; pp < playerProj.length; pp++) {
           var p = playerProj[pp];
           if (!p.active) continue;
