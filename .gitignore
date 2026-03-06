@@ -135,5 +135,11 @@ $RECYCLE.BIN/
 
 # Certificates / secrets
 *.pem
+*.key
+id_rsa
+id_ed25519
 certs/
 secrets/
+
+# Additional env patterns
+.env.*

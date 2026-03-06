@@ -176,6 +176,15 @@ const responsiveChecks = [
   ['resize scale uses Math.min for aspect ratio preservation', /Math\.min[\s\S]{0,60}innerWidth/],
 ];
 
+const securityChecks = [
+  ['CSP meta tag present', /http-equiv="Content-Security-Policy"/],
+  ['CSP default-src none', /default-src\s+'none'/],
+  ['localStorage parseInt with radix 10', /parseInt\s*\(\s*localStorage\.getItem[\s\S]{0,40},\s*10\s*\)/],
+  ['null-prototype key map prevents prototype pollution', /Object\.create\s*\(\s*null\s*\)/],
+  ['touchstart preventDefault called', /touchstart[\s\S]{0,200}preventDefault/],
+  ['touchend preventDefault called', /touchend[\s\S]{0,200}preventDefault/],
+];
+
 let failed = 0;
 for (const [name, pattern] of [
   ...checks,
@@ -186,6 +195,7 @@ for (const [name, pattern] of [
   ...engineChecks,
   ...visualPolishChecks,
   ...responsiveChecks,
+  ...securityChecks,
 ]) {
   if (!pattern.test(html)) {
     console.error(`FAIL: missing ${name}`);
@@ -201,7 +211,8 @@ const total =
   explosionChecks.length +
   engineChecks.length +
   visualPolishChecks.length +
-  responsiveChecks.length;
+  responsiveChecks.length +
+  securityChecks.length;
 // Deploy workflow existence check
 const deployYmlExists = existsSync('./.github/workflows/deploy.yml');
 if (!deployYmlExists) {
