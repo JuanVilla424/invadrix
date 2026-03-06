@@ -132,3 +132,14 @@ $RECYCLE.BIN/
 *.njsproj
 *.sln
 *.sw?
+
+# Certificates / secrets
+*.pem
+*.key
+id_rsa
+id_ed25519
+certs/
+secrets/
+
+# Additional env patterns
+.env.*

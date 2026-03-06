@@ -1,150 +1,62 @@
-## [1.0.13] - 2025-04-06
+## [0.1.3] - 2026-03-04
 
 ### Bug Fixes
 
-- **core**: deps update (`patch candidate`)
-- **deps**: update pytest-cov requirement from ^5.0.0 to ^6.1.1 in /backend (#54)
-- **deps**: update pytest-cov requirement from ^5.0.0 to ^6.1.1 (#53)
-- **deps**: update pytest-cov requirement in /backend
-- **deps**: update pytest-cov requirement from ^5.0.0 to ^6.1.1
+- **core**: restrict pages deployment to main branch only (`patch candidate`)
+- **core**: use null-prototype object for key map to prevent prototype pollution (`patch candidate`)
+- **core**: show tap-to-restart prompt on touch devices in game over screen (`patch candidate`)
 
-## [1.0.12] - 2025-04-06
+### Documentation
 
-### Bug Fixes
+- **core**: update changelog
+- **core**: add live demo link to readme and scope deploy artifact to pages files (`patch candidate`)
 
-- **core**: fixed yamlint dep (`patch candidate`)
+### Tests
 
-## [1.0.11] - 2025-04-06
+- **core**: expand test coverage for responsive, hidpi, touch, and deploy workflow (`patch candidate`)
 
-### Bug Fixes
-
-- **core**: fixed depdendabot prefix (`patch candidate`)
-
-## [1.0.10] - 2025-04-06
+## [0.1.1] - 2026-03-04
 
 ### Features
 
-- **core**: update cazira doc compiler
-- **core**: update cazira doc compiler
-- **core**: added cazira doc compiler (#32)
-- **core**: added cazira doc compiler
+- **core**: add responsive mobile layout with hidpi and github pages deployment (`minor candidate`)
+- **core**: trigger github pages deployment on dev branch push (`patch candidate`)
+- **core**: add responsive scaling, mobile touch controls, and github pages deployment
+- **core**: add touch controls with swipe-to-start and tap-to-fire for mobile
+- **core**: responsive canvas scaling via css transform with 10px padding
+- **core**: add wave splash scale-in animation with difficulty hint text
+- **core**: add polished title screen with colored letters, alien demos, blink prompt, and score table
+- **core**: add player death break-apart animation and red screen flash on hit
+- **core**: add alien death explosion pool with 8-particle burst animation
+- **core**: add 2-frame alien animation toggling every 500ms with distinct a/b shape variants
+- **core**: apply pico-8 palette colors to aliens, player, shields, and projectiles
+- **core**: add scrolling starfield background with 50 pre-allocated star dots
+- **core**: implement complete space invaders game engine with all gameplay systems
+- **core**: fix player entity properties - y=560, h=24, rename dead/deathPause/visible/lives
+- **core**: implement complete space invaders game engine with iife wrapper
+- **core**: implement complete space invaders game engine in index.html
+- **core**: project scaffold with base index.html
 
 ### Bug Fixes
 
-- **core**: deps update (`patch candidate`)
+- **core**: sanitize localStorage hi-score against NaN on non-numeric values (`patch candidate`)
 
-### Other Changes
+### Documentation
 
-- deps: update setuptools requirement from ^75.2.0 to ^78.1.0 in /backend (#46)
-- deps: update setuptools requirement from ^75.2.0 to ^78.1.0 (#45)
-- deps: update setuptools requirement from ^75.2.0 to ^78.1.0 in /backend
-- deps: update setuptools requirement from ^75.2.0 to ^78.1.0
-- deps: update isort requirement from ^5.12.0 to ^6.0.1 (#40)
-- deps: update isort requirement from ^5.12.0 to ^6.0.1 in /backend (#39)
-- deps: update black requirement from ^24.3.0 to ^25.1.0 in /backend (#38)
-- deps: update certifi requirement from ^2024.8.30 to ^2025.1.31 in /backend (#37)
-- deps: update certifi requirement from ^2024.8.30 to ^2025.1.31 (#35)
-- deps: update black requirement from ^24.3.0 to ^25.1.0 (#34)
-- deps: update isort requirement from ^5.12.0 to ^6.0.1
-- deps: update isort requirement from ^5.12.0 to ^6.0.1 in /backend
-- deps: update black requirement from ^24.3.0 to ^25.1.0 in /backend
-- deps: update certifi requirement in /backend
-- deps: update certifi requirement from ^2024.8.30 to ^2025.1.31
-- deps: update black requirement from ^24.3.0 to ^25.1.0
+- **core**: update changelog
 
-## [1.0.8] - 2024-11-11
+### Tests
 
-### Styles
-
-- **core**: fixed badges (`patch candidate`)
-- **core**: fixed badges (`patch candidate`)
-
-## [1.0.6] - 2024-11-11
-
-### Other Changes
-
-- ️ refactor(core): fixed skeleton [patch candidate]
-- ️ refactor(core): fixed skeleton
-
-## [1.0.5] - 2024-10-28
-
-### Features
-
-- **core**: fixed version-controller.yml create_tag behavior error (#10)
-- **core**: fixed template artifacts (#6)
+- **core**: add 5 targeted hidpi and resize checks to reach 143 (`patch candidate`)
+- **core**: add 27 visual polish checks for animations, colors, starfield, and title screen
+- **core**: add hud, wave system, and high score verification checks
+- **core**: add shield, collision, and scoring verification checks
+- **core**: add alien grid and projectile verification checks
 
 ### Chores
 
-- **core**: updated scripts submodule (`patch candidate`)
-- **core**: updated scripts submodule
-- **core**: updated scripts submodule
-- **core**: update scripts module
-- **deps**: update setuptools requirement from ^67.0.0 to ^75.2.0 in /backend in the pip group across 1 directory (#8) (#9)
+- **core**: sync pyproject.toml version with bumpversion cfg (`patch candidate`)
 
 ### Other Changes
 
-- Update CNAME
-- Create CNAME
-
-## [1.0.4] - 2024-10-24
-
-### Styles
-
-- **core**: fixed readme file
-
-### Chores
-
-- **core**: fixed info files (`patch candidate`)
-- **core**: fixed info files
-- **core**: added scripts submodule
-
-## [1.0.3] - 2024-10-21
-
-### Chores
-
-- **core**: version controller main branch (`patch candidate`)
-
-## [1.0.2] - 2024-10-21
-
-### Features
-
-- **core**: fixed version-controller.yml create_tag behavior error
-- **core**: fixed template artifacts
-- **core**: fixed template artifacts (#2)
-- **core**: fixed template artifacts
-- **core**: added template node artifacts
-- **core**: fixed template python artifacts
-- **core**: fixed template python artifacts
-- **core**: fixed template python artifacts
-- **core**: fixed template python artifacts
-- **core**: added more to template python artifacts
-
-### Styles
-
-- **fixed**: readme files
-- **fixed**: readme files
-- **fixed**: readme files
-- **fixed**: readme files
-- **core**: added md files
-
-### Chores
-
-- **core**: fixed auxiliary hook scripts (`patch candidate`)
-- **core**: fixed auxiliary hook scripts (`patch candidate`)
-- **core**: fixed auxiliary hook scripts (`patch candidate`)
-- **core**: fixed auxiliary hook scripts
-- **core**: fixed auxiliary hook scripts
-- **core**: fixed auxiliary hook scripts
-- **deps**: update setuptools requirement from ^67.0.0 to ^75.2.0 in /backend in the pip group across 1 directory (#8)
-- **deps**: update setuptools requirement
-
-### Other Changes
-
-- deps: update pytest-cov requirement from ^4.0.0 to ^5.0.0 (#4)
-- deps: update setuptools requirement from ^67.0.0 to ^75.2.0 (#3)
-- deps: update pytest-cov requirement from ^4.0.0 to ^5.0.0
-- deps: update setuptools requirement from ^67.0.0 to ^75.2.0
-- chore(): added node cicd
-- Update README.md
-- Create ICONS.md
 - Initial commit

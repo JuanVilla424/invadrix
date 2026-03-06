@@ -67,11 +67,12 @@ jobs:
         id: add_modules
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          CURRENT_BRANCH: ${{ steps.determine_branch.outputs.current_branch }}
         run: |
           git config --global url."https://${ACCESS_TOKEN}@github.com/".insteadOf "https://github.com/"
           git rm -r --cached scripts || true
           rm -rf scripts
-          git submodule add -b ${{ steps.determine_branch.outputs.current_branch }} https://github.com/JuanVilla424/scripts.git
+          git submodule add -b "${CURRENT_BRANCH}" https://github.com/JuanVilla424/scripts.git
       - name: Run Changelog Generator
         id: run_changelog
         run: |
@@ -97,9 +98,12 @@ jobs:
       - name: Create Tag
         id: create_tag
         if: steps.check_arrow.outputs.contains_arrow == 'true'
+        env:
+          CURRENT_VERSION: ${{ steps.get_version.outputs.current_version }}
+          CURRENT_BRANCH: ${{ steps.determine_branch.outputs.current_branch }}
         run: |
-          VERSION=${{ steps.get_version.outputs.current_version }}
-          BRANCH_NAME=${{ steps.determine_branch.outputs.current_branch }}
+          VERSION="${CURRENT_VERSION}"
+          BRANCH_NAME="${CURRENT_BRANCH}"
           TAG_NAME="v${VERSION}-${BRANCH_NAME}"
           git tag "$TAG_NAME"
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
@@ -107,25 +111,32 @@ jobs:
       - name: Push Tag
         id: push_tag
         if: steps.check_arrow.outputs.contains_arrow == 'true'
-        run: |
-          git push origin "${{ steps.create_tag.outputs.tag_name }}"
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          PUSH_TAG: ${{ steps.create_tag.outputs.tag_name }}
+        run: |
+          git push origin "${PUSH_TAG}"
       - name: Ensure on Current Branch
         id: ensure_branch
         if: steps.check_arrow.outputs.contains_arrow == 'true'
+        env:
+          CURRENT_BRANCH: ${{ steps.determine_branch.outputs.current_branch }}
         run: |
-          git checkout "${{ steps.determine_branch.outputs.current_branch }}"
+          git checkout "${CURRENT_BRANCH}"
       - name: Create Pull Request
         id: create_pull_request
         if: steps.check_arrow.outputs.contains_arrow == 'true' && github.ref != 'refs/heads/main'
         uses: actions/github-script@v7
+        env:
+          HEAD: ${{ steps.determine_branch.outputs.current_branch }}
+          BASE: ${{ steps.determine_branch.outputs.next_branch }}
+          VERSION: ${{ steps.create_tag.outputs.tag_name }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const head = '${{ steps.determine_branch.outputs.current_branch }}';
-            const base = '${{ steps.determine_branch.outputs.next_branch }}';
-            const version = '${{ steps.create_tag.outputs.tag_name }}';
+            const head = process.env.HEAD;
+            const base = process.env.BASE;
+            const version = process.env.VERSION;
             const title = `🔖 From ${head} → Bump version: ${version} into ${base}`;
             const body = `Automatically created pull request for release ${version} into ${base} branch.`;
 
@@ -153,19 +164,20 @@ jobs:
       - name: Push Tag for Main Branch
         id: push_tag_to_main
         if: github.ref == 'refs/heads/main' && steps.check_arrow.outputs.contains_arrow == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          CURRENT_VERSION: ${{ steps.get_version.outputs.current_version }}
         run: |
-          VERSION=${{ steps.get_version.outputs.current_version }}
+          VERSION="${CURRENT_VERSION}"
           TAG_NAME="v${VERSION}"
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       - name: Generate Release Notes
         id: release_notes
         if: github.ref == 'refs/heads/main' && steps.check_arrow.outputs.contains_arrow == 'true'
         run: |
-          TAG="${{ steps.push_tag_to_main.outputs.tag_name }}"
+          TAG="${PUSH_TAG}"
           PREV_TAG=$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || echo "")
 
           if [ -z "$PREV_TAG" ]; then
@@ -243,6 +255,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
         env:
           REPO_FULL: ${{ env.REPO_FULL }}
+          PUSH_TAG: ${{ steps.push_tag_to_main.outputs.tag_name }}
       - name: Create GitHub Release
         id: create_release
         if: github.ref == 'refs/heads/main' && steps.check_arrow.outputs.contains_arrow == 'true'

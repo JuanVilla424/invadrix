@@ -1,6 +1,6 @@
 # 🔒 Security Policy
 
-Security Policy for **GitHub CICD Template** repository includes all required compliance matrix and artifact mapping.
+Security Policy for **invadrix** — a zero-dependency HTML5 Space Invaders clone deployed on GitHub Pages.
 
 ## 🧮 Supported Versions
 

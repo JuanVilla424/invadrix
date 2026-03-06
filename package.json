@@ -1,0 +1,12 @@
+{
+  "name": "invadrix",
+  "version": "0.1.5",
+  "description": "Classic Space Invaders clone — single-file HTML5 Canvas game with zero dependencies",
+  "private": true,
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "echo 'dev'",
+    "build": "echo 'No build step — single-file HTML5 game'",
+    "test": "node --input-type=module < test.js"
+  }
+}
