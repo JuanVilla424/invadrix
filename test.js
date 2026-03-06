@@ -179,6 +179,8 @@ const responsiveChecks = [
 const securityChecks = [
   ['CSP meta tag present', /http-equiv="Content-Security-Policy"/],
   ['CSP default-src none', /default-src\s+'none'/],
+  ['CSP script-src uses sha256 hash not unsafe-inline', /script-src\s+'sha256-/],
+  ['CSP style-src uses sha256 hash not unsafe-inline', /style-src\s+'sha256-/],
   ['localStorage parseInt with radix 10', /parseInt\s*\(\s*localStorage\.getItem[\s\S]{0,40},\s*10\s*\)/],
   ['null-prototype key map prevents prototype pollution', /Object\.create\s*\(\s*null\s*\)/],
   ['touchstart preventDefault called', /touchstart[\s\S]{0,200}preventDefault/],
@@ -236,7 +238,43 @@ for (const [name, pattern] of deployChecks) {
   }
 }
 
-const grandTotal = total + 1 + deployChecks.length;
+const versionControllerYmlExists = existsSync(
+  './.github/workflows/version-controller.yml'
+);
+if (!versionControllerYmlExists) {
+  console.error('FAIL: missing .github/workflows/version-controller.yml');
+  failed++;
+}
+
+const versionControllerYml = versionControllerYmlExists
+  ? readFileSync('./.github/workflows/version-controller.yml', 'utf8')
+  : '';
+const versionControllerChecks = [
+  [
+    'version-controller github-script passes branch via env block',
+    /HEAD:\s*\$\{\{\s*steps\.determine_branch\.outputs\.current_branch\s*\}\}/,
+  ],
+  [
+    'version-controller github-script reads head from process.env',
+    /process\.env\.HEAD/,
+  ],
+  [
+    'version-controller github-script reads base from process.env',
+    /process\.env\.BASE/,
+  ],
+  [
+    'version-controller github-script reads version from process.env',
+    /process\.env\.VERSION/,
+  ],
+];
+for (const [name, pattern] of versionControllerChecks) {
+  if (!pattern.test(versionControllerYml)) {
+    console.error(`FAIL: missing ${name}`);
+    failed++;
+  }
+}
+
+const grandTotal = total + 1 + deployChecks.length + 1 + versionControllerChecks.length;
 if (failed === 0) {
   console.log(`All ${grandTotal} checks passed.`);
 } else {
