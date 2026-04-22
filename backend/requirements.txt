@@ -16,7 +16,7 @@ pre-commit>=4.0.1
 httpx>=0.24.0
 
 # Idna for Poetry
-idna>=3.0
+idna>=3.12
 
 # Certifi for Poetry
 certifi>=2024.8.30
