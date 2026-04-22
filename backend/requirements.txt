@@ -19,7 +19,7 @@ httpx>=0.24.0
 idna>=3.0
 
 # Certifi for Poetry
-certifi>=2024.8.30
+certifi>=2026.4.22
 
 # Alembic for Database Migrations
 alembic>=1.11.1
