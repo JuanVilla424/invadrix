@@ -25,7 +25,7 @@ certifi>=2024.8.30
 alembic>=1.11.1
 
 # Pytest for Unit/Integration Testing
-pytest>=7.3.1
+pytest>=9.0.3
 pytest-cov>=4.0.0
 
 # Coverage Reporting
